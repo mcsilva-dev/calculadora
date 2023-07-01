@@ -5,12 +5,12 @@ last = ''
 operation = 0
 
 def main(page: ft.Page):
-    
-    global operation, last
 
     page.title = 'Calculadora'
 
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.window_max_height = 450
+    page.window_max_width = 450
 
     numbers = {
         'zero': ft.Text(value='0'),
@@ -28,11 +28,11 @@ def main(page: ft.Page):
         'comma': ft.Text(value=','),
         'plus': ft.Text(value='+'),
         'minus': ft.Text(value='-'),
-        'multiply': ft.Text(value='x'),
+        'multiply': ft.Text(value='*'),
         'divisor': ft.Text(value='/'),
         'equals': ft.Text(value='='),
         'percent': ft.Text(value='%'),
-        'erase': ft.Text(value='C')
+        'erase': ft.Text(value='AC')
     }
 
     def number_zero(e):
@@ -109,52 +109,56 @@ def main(page: ft.Page):
     def plus_button(e):
         global operation, last
         if last == 'minus':
-            operation -= int(txt_box.value)
-            txt_box.value = '0'
+            operation -= float(txt_box.value)
             pass
-        if operation == 0:
-            operation = int(txt_box.value)
-            txt_box.value = '0'
-        else:
-            operation += int(txt_box.value)
-            txt_box.value = '0'
+        if operation == 0 and last == 'plus' or last == '':
+            operation = float(txt_box.value)
+        elif operation != 0 and last == 'plus':
+            operation += float(txt_box.value)
         last = 'plus'
         page.update()
+        txt_box.value = '0'
 
     def minus_button(e):
         global operation, last
         if last == 'plus':
-            operation += int(txt_box.value)
-            txt_box.value = '0'
+            operation += float(txt_box.value)
             pass
-        if operation == 0:
-            operation = int(txt_box.value)
-            txt_box.value = '0'
-        else:
-            operation -= int(txt_box.value)
-            txt_box.value = '0'
+        if operation == 0 and last == 'minus' or last == '':
+            operation = float(txt_box.value)
+        elif operation != 0 and last == 'minus':
+            operation -= float(txt_box.value)
         last = 'minus'
         page.update()
+        txt_box.value = '0'
     
     def equals_button(e):
-        global operation
+        global operation, last
         if last == 'plus':
-            operation += (int(txt_box.value))
+            operation += float(txt_box.value)
         elif last == 'minus':
-            operation -= (int(txt_box.value))
+            operation -= float(txt_box.value)
         txt_box.value = str(operation)
         page.update()
-        operation = 0
         txt_box.value = '0'
     
-    def erase_button(e):
-        global operation
-        operation = 0
-        txt_box.value = '0'
+    def comma_button(e):
+        txt_box.value += '.'
         page.update()
     
-    txt_box = ft.TextField(text_align=ft.TextAlign.RIGHT, width=220, value='0', bgcolor='black')
-    print(operation)
+    def erase_button(e):
+        global operation, last
+        operation = 0
+        txt_box.value = '0'
+        last = ''
+        page.update()
+    
+    txt_box = ft.TextField(
+                        text_align=ft.TextAlign.RIGHT, 
+                        width=350, 
+                        value='0', 
+                        bgcolor='black'
+                        )
     
     page.add(
         ft.Row(controls=
@@ -162,66 +166,153 @@ def main(page: ft.Page):
                 txt_box
             ],
             alignment= ft.MainAxisAlignment.CENTER
-        )
-    )
-
-    page.add(
+        ),
         ft.Row(controls=
             [
-                ft.ElevatedButton(text=operators['erase'].value, width=50, on_click=erase_button),
-                ft.ElevatedButton(text='', width=50),
-                ft.ElevatedButton(text='', width=50),
-                ft.ElevatedButton(text=operators['divisor'].value, width=50)
+                ft.ElevatedButton(
+                                text=operators['erase'].value,
+                                width=80, on_click=erase_button, 
+                                bgcolor=ft.colors.BLUE_GREY_100, 
+                                color='black'
+                                ),
+                ft.ElevatedButton(
+                                text='', width=80, 
+                                bgcolor=ft.colors.BLUE_GREY_100, 
+                                color='black'
+                                ),
+                ft.ElevatedButton(
+                                text='', 
+                                width=80, 
+                                bgcolor=ft.colors.BLUE_GREY_100, 
+                                color='black'
+                                ),
+                ft.ElevatedButton(
+                                text=operators['divisor'].value, 
+                                width=80, 
+                                bgcolor='orange', 
+                                color='white'
+                                )
             ],
             alignment= ft.MainAxisAlignment.CENTER
-        )
-    )
-
-    page.add(
+        ),
         ft.Row(controls=
             [
-                ft.ElevatedButton(text=numbers['seven'].value, width=50, on_click=number_seven),
-                ft.ElevatedButton(text=numbers['eight'].value, width=50, on_click=number_eight),
-                ft.ElevatedButton(text=numbers['nine'].value, width=50, on_click=number_nine),
-                ft.ElevatedButton(text=operators['multiply'].value, width=50)
+                ft.ElevatedButton(
+                                text=numbers['seven'].value,
+                                width=80,
+                                on_click=number_seven,
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['eight'].value, 
+                                width=80, 
+                                on_click=number_eight, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['nine'].value, 
+                                width=80, 
+                                on_click=number_nine, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=operators['multiply'].value, 
+                                width=80, 
+                                bgcolor='orange', 
+                                color='white'
+                                )
             ],
             alignment= ft.MainAxisAlignment.CENTER
+        ),
+        ft.Row(controls=
+            [
+                ft.ElevatedButton(
+                                text=numbers['four'].value, 
+                                width=80, 
+                                on_click=number_four, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['five'].value, 
+                                width=80, 
+                                on_click=number_five, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['six'].value, 
+                                width=80, on_click=number_six, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=operators['minus'].value, 
+                                width=80, 
+                                on_click=minus_button, 
+                                bgcolor='orange', 
+                                color='white')
+            ],
+            alignment = ft.MainAxisAlignment.CENTER
+        ),
+        ft.Row(controls=
+            [
+                ft.ElevatedButton(
+                                text=numbers['one'].value, 
+                                width=80, 
+                                on_click=number_one, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['two'].value, 
+                                width=80, 
+                                on_click=number_two, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=numbers['three'].value, 
+                                width=80, on_click=number_three, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'),
+                ft.ElevatedButton(
+                                text=operators['plus'].value, 
+                                width=80, 
+                                on_click=plus_button, 
+                                bgcolor='orange', 
+                                color='white'
+                                )
+            ],
+            alignment = ft.MainAxisAlignment.CENTER
+        ),
+        ft.Row(controls=
+            [
+                ft.ElevatedButton(
+                                text=numbers['zero'].value, 
+                                width=170, on_click=number_zero, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white'
+                                ),
+                ft.ElevatedButton(
+                                text=operators['comma'].value, 
+                                width=80, 
+                                bgcolor=ft.colors.WHITE24, 
+                                color='white',
+                                on_click=comma_button,
+                                ),
+                ft.ElevatedButton(
+                                text=operators['equals'].value, 
+                                width=80, on_click=equals_button, 
+                                bgcolor='orange', 
+                                color='white'
+                                )
+            ],
+            alignment = ft.MainAxisAlignment.CENTER
         )
-    )
-
-    page.add(
-        ft.Row(controls=
-            [
-                ft.ElevatedButton(text=numbers['four'].value, width=50, on_click=number_four),
-                ft.ElevatedButton(text=numbers['five'].value, width=50, on_click=number_five),
-                ft.ElevatedButton(text=numbers['six'].value, width=50, on_click=number_six),
-                ft.ElevatedButton(text=operators['minus'].value, width=50, on_click=minus_button)
-            ],
-            alignment = ft.MainAxisAlignment.CENTER
-            )
-    )
-
-    page.add(
-        ft.Row(controls=
-            [
-                ft.ElevatedButton(text=numbers['one'].value, width=50, on_click=number_one),
-                ft.ElevatedButton(text=numbers['two'].value, width=50, on_click=number_two),
-                ft.ElevatedButton(text=numbers['three'].value, width=50, on_click=number_three),
-                ft.ElevatedButton(text=operators['plus'].value, width=50, on_click=plus_button)
-            ],
-            alignment = ft.MainAxisAlignment.CENTER
-            )
-    )
-
-    page.add(
-        ft.Row(controls=
-            [
-                ft.ElevatedButton(text=numbers['zero'].value, width=100, on_click=number_zero),
-                ft.ElevatedButton(text=operators['comma'].value, width=50),
-                ft.ElevatedButton(text=operators['equals'].value, width=50, on_click=equals_button)
-            ],
-            alignment = ft.MainAxisAlignment.CENTER
-            )
     )
 
     
