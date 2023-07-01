@@ -4,7 +4,9 @@ last = ''
 
 operation = 0
 
-def main(page: ft.page):
+def main(page: ft.Page):
+    
+    global operation, last
 
     page.title = 'Calculadora'
 
@@ -34,6 +36,7 @@ def main(page: ft.page):
     }
 
     def number_zero(e):
+        global operation
         if txt_box.value != '0':
             txt_box.value += '0'
         else:
@@ -105,6 +108,10 @@ def main(page: ft.page):
     
     def plus_button(e):
         global operation, last
+        if last == 'minus':
+            operation -= int(txt_box.value)
+            txt_box.value = '0'
+            pass
         if operation == 0:
             operation = int(txt_box.value)
             txt_box.value = '0'
@@ -116,6 +123,10 @@ def main(page: ft.page):
 
     def minus_button(e):
         global operation, last
+        if last == 'plus':
+            operation += int(txt_box.value)
+            txt_box.value = '0'
+            pass
         if operation == 0:
             operation = int(txt_box.value)
             txt_box.value = '0'
@@ -143,7 +154,8 @@ def main(page: ft.page):
         page.update()
     
     txt_box = ft.TextField(text_align=ft.TextAlign.RIGHT, width=220, value='0', bgcolor='black')
-
+    print(operation)
+    
     page.add(
         ft.Row(controls=
             [
@@ -211,5 +223,7 @@ def main(page: ft.page):
             alignment = ft.MainAxisAlignment.CENTER
             )
     )
+
+    
 
 ft.app(target=main)
