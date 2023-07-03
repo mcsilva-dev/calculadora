@@ -29,7 +29,7 @@ def main(page: ft.Page):
         'plus': ft.Text(value='+'),
         'minus': ft.Text(value='-'),
         'multiply': ft.Text(value='*'),
-        'divisor': ft.Text(value='/'),
+        'divider': ft.Text(value='/'),
         'equals': ft.Text(value='='),
         'percent': ft.Text(value='%'),
         'erase': ft.Text(value='AC')
@@ -110,8 +110,11 @@ def main(page: ft.Page):
         global operation, last
         if last == 'minus':
             operation -= float(txt_box.value)
-            pass
-        if operation == 0 and last == 'plus' or last == '':
+        elif last == 'multiply':
+            operation *= float(txt_box.value)
+        elif last == 'divider':
+            operation /= float(txt_box.value)
+        if operation == 0 and last == '':
             operation = float(txt_box.value)
         elif operation != 0 and last == 'plus':
             operation += float(txt_box.value)
@@ -123,8 +126,11 @@ def main(page: ft.Page):
         global operation, last
         if last == 'plus':
             operation += float(txt_box.value)
-            pass
-        if operation == 0 and last == 'minus' or last == '':
+        elif last == 'multiply':
+            operation *= float(txt_box.value)
+        elif last == 'divider':
+            operation /= float(txt_box.value)
+        if operation == 0 and last == '':
             operation = float(txt_box.value)
         elif operation != 0 and last == 'minus':
             operation -= float(txt_box.value)
@@ -138,14 +144,51 @@ def main(page: ft.Page):
             operation += float(txt_box.value)
         elif last == 'minus':
             operation -= float(txt_box.value)
+        elif last == 'multiply':
+            operation *= float(txt_box.value)
+        elif last == 'divider':
+            operation /= float(txt_box.value)
         txt_box.value = str(operation)
+        last = ''
         page.update()
-        txt_box.value = '0'
     
     def comma_button(e):
         txt_box.value += '.'
         page.update()
     
+    def multiply_button(e):
+        global operation, last
+        if last == 'plus':
+            operation += float(txt_box.value)
+        elif last == 'minus':
+            operation += float(txt_box.value)
+        elif last == 'divider':
+            operation /= float(txt_box.value)
+        if operation == 0 or last == '':
+            operation = float(txt_box.value)
+        elif operation != 0 and last == 'multiply':
+            operation *= float(txt_box.value)
+        last = 'multiply'
+        page.update()
+        txt_box.value = '0'
+    
+    def divider_button(e):
+        global operation, last
+        if last == 'plus':
+            operation += float(txt_box.value)
+        elif last == 'minus':
+            operation -= float(txt_box.value)
+        elif last == 'multiply':
+            operation *= float(txt_box.value)
+        if operation == 0 and last == '':
+            operation = float(txt_box.value)
+        elif operation != 0 and last == 'divider':
+            operation /= float(txt_box.value)
+        last = 'divider'
+        page.update()
+        txt_box.value = '0'
+
+
     def erase_button(e):
         global operation, last
         operation = 0
@@ -187,10 +230,11 @@ def main(page: ft.Page):
                                 color='black'
                                 ),
                 ft.ElevatedButton(
-                                text=operators['divisor'].value, 
+                                text=operators['divider'].value, 
                                 width=80, 
                                 bgcolor='orange', 
-                                color='white'
+                                color='white',
+                                on_click=divider_button
                                 )
             ],
             alignment= ft.MainAxisAlignment.CENTER
@@ -222,7 +266,8 @@ def main(page: ft.Page):
                                 text=operators['multiply'].value, 
                                 width=80, 
                                 bgcolor='orange', 
-                                color='white'
+                                color='white',
+                                on_click=multiply_button
                                 )
             ],
             alignment= ft.MainAxisAlignment.CENTER
